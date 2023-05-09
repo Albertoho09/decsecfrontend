@@ -13,10 +13,8 @@
 }
 
 .imagenfondo{
-  background-image: url(./logo/logosimple.png);
+  background-image: url(./logo/logosimplesombra.png);
   background-size:cover;
-  background-position:100px;
-  opacity: 0.5;
 }
 
 .App-logo {
