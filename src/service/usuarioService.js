@@ -19,4 +19,8 @@ export class usuarioService {
     obtener(id) {
         return axios.get(this.baseUrl + "obtener/"+id).then(res => res.data);
     }
+
+    login(correo, contrasenia) {
+        return axios.get(this.baseUrl + "login/"+correo+"/"+contrasenia).then(res => res.data);
+    }
 }

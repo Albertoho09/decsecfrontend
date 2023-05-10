@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import './App.css';
 import { usuarioService } from './service/usuarioService.js';
 import { Button } from 'primereact/button';
@@ -19,7 +20,6 @@ export default class App extends Component {
 
   constructor() {
     super();
-    this.usuarioService = new usuarioService();
 
     this.state = {
       displayBasic: false,
@@ -28,9 +28,16 @@ export default class App extends Component {
       displayMaximizable: false,
       displayPosition: false,
       displayResponsive: false,
-      position: 'center'
+      position: 'center',
+
+      codigosesion: null,
+
+      inputValue1: '',
+      inputValue2: ''
     };
 
+
+    this.usuarioService = new usuarioService();
     this.onClick = this.onClick.bind(this);
     this.onHide = this.onHide.bind(this);
 
@@ -38,6 +45,21 @@ export default class App extends Component {
 
   componentDidMount() {
     this.usuarioService.getAll().then(data => this.setState({ personas: data }));
+  }
+
+
+  handleClick = () => {
+    console.log('Input 1:', this.state.inputValue1);
+    console.log('Input 2:', this.state.inputValue2);
+    this.usuarioService.login(this.state.inputValue1, this.state.inputValue2).then(data => this.setState({ codigosesion: data }))
+  }
+
+  handleInputChange1 = (event) => {
+    this.setState({ inputValue1: event.target.value });
+  }
+
+  handleInputChange2 = (event) => {
+    this.setState({ inputValue2: event.target.value });
   }
 
   onClick(name, position) {
@@ -63,7 +85,7 @@ export default class App extends Component {
 
   renderFooter(name) {
     return (
-      <div style={{ width: '100%'}}>
+      <div style={{ width: '100%' }}>
         <div className="surface-card p-4 shadow-2 border-round w-full">
           <div className="text-center mb-5">
             <img src={imagenInicioSesion} alt="hyper" height={125} className="mb-3" />
@@ -72,16 +94,18 @@ export default class App extends Component {
 
           <div>
             <label htmlFor="email" className="block text-900 font-medium mb-2">Correo Electrónico</label>
-            <InputText id="email" type="text" placeholder="Correo Electrónico" className="w-full mb-3" />
+            <InputText id="input1" type="text" placeholder="Correo Electrónico" className="w-full mb-3" value={this.state.inputValue1}
+              onChange={this.handleInputChange1} />
 
             <label htmlFor="password" className="block text-900 font-medium mb-2">Contraseña</label>
-            <InputText type="password" placeholder="Contraseña" className="w-full mb-3" />
+            <InputText id="input2" type="password" placeholder="Contraseña" className="w-full mb-3" value={this.state.inputValue2}
+              onChange={this.handleInputChange2} />
 
             <div className="flex align-items-center justify-content-between mb-6">
               <a className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Forgot your password? po te jode</a>
             </div>
 
-            <Button label="Iniciar Sesión" icon="pi pi-user" className="w-full" />
+            <Button label="Iniciar Sesión" icon="pi pi-user" className="w-full" onClick={this.handleClick}/>
           </div>
         </div>
       </div>
