@@ -51,3 +51,20 @@
     transform: rotate(360deg);
   }
 }
+
+/* Estilo para la barra de desplazamiento */
+.content::-webkit-scrollbar {
+  width: 10px; /* Ancho de la barra de desplazamiento */
+}
+
+.content::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color de fondo de la barra de desplazamiento */
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: #888; /* Color del "pulgador" de la barra de desplazamiento */
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color del "pulgador" al pasar el mouse sobre él */
+}
