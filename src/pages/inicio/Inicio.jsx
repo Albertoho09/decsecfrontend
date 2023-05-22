@@ -18,6 +18,7 @@ import 'primeicons/primeicons.css';
 import "primeflex/primeflex.css";
 import imagenInicio from "../../logo/captura.png";
 import imagenInicioSesion from "../../logo/logocompleto.png";
+import sinfoto from "../../logo/sinfoto.png";
 import { usuarioService } from '../../service/usuarioService';
 //import { StyleClass } from 'primereact/styleclass';
 
@@ -42,15 +43,7 @@ export const Inicio = () => {
     correoInicio: '',
     contraseniaInicio: '',
 
-    //Variables Registro
-    nick: '',
-    correoRe: '',
-    contraseniaRe: '',
-    nombreRe: '',
-    apellidoRe: '',
-    fechanacRe: null,
-
-    fotoper: '',
+    fotoper: sinfoto
   })
 
   const [personaregistro, setPersonaregistro] = useState({
@@ -60,18 +53,16 @@ export const Inicio = () => {
     contrasenia: '',
     nombre: '',
     apellido: '',
-    fechanac: '',
+    fechanac: null,
     namigos: 0,
     fotoperfil: null,
     npublicaciones: 0
-  }
-  );
+  });
 
-  const [personasesion, setPersonasesion] = useState({});
+  const [fotoperfil, setfotoperfil] = useState({
+    fotoperfil: null
+  });
 
-  var file = null;
-  //var onClick = onClick.bind(this);
-  //var onHide = onHide.bind(this);
 
   const navigate = useNavigate();
 
@@ -85,7 +76,6 @@ export const Inicio = () => {
         } else {
           var id = data
           usuarioserviceInicio.obtener(id).then(data => {
-            setPersonasesion({ usuario: data });
             console.log("datos usuario", data);
             navigate('/principal', { state: data })
           })
@@ -117,14 +107,19 @@ export const Inicio = () => {
     });
   }
 
+
   const guardarfoto = (e) => {
 
     console.log("entro en guardar foto");
-    file = e.target.files[0];
-    const url = URL.createObjectURL(file);
-    setpersonaRe({
+    setfotoperfil(prevState => ({
+      ...prevState,
+      fotoperfil: e.target.files[0]
+    }));
+    const url = URL.createObjectURL(e.target.files[0]);
+    setpersonaRe(prevState => ({
+      ...prevState,
       fotoper: url
-    });
+    }));
 
     console.log("salgo de guardar foto");
   }
@@ -141,17 +136,9 @@ export const Inicio = () => {
   const comprobaciones = () => {
 
     console.log("consola:", "he pasado por aqui");
-    if (personaRe.apellidoRe.length > 0 && personaRe.nombreRe.length > 0 &&
-      personaRe.correoRe.length > 0 && personaRe.contraseniaRe.length > 0 &&
-      personaRe.fechanacRe != null && personaRe.nick.length > 0 && personaRe.fotoper.length > 0) {
-
-      setPersonaregistro.apellido = personaRe.apellidoRe;
-      setPersonaregistro.nombre = personaRe.nombreRe;
-      setPersonaregistro.nick = personaRe.nick;
-      setPersonaregistro.fechanac = personaRe.fechanacRe;
-      setPersonaregistro.correo = personaRe.correoRe;
-      setPersonaregistro.contrasenia = personaRe.contraseniaRe;
-
+    if (personaregistro.apellido !== '' && personaregistro.nombre !== '' &&
+      personaregistro.correo !== '' && personaregistro.contrasenia !== '' &&
+      personaregistro.fechanac !== null && personaregistro.nick !== '' && personaRe.fotoper !== '') {
       return true;
     }
     else {
@@ -159,20 +146,25 @@ export const Inicio = () => {
     }
   }
 
+
   const registro = () => {
     console.log("fotoper", personaRe.fotoper);
     const usuarioserviceRe = new usuarioService();
     if (comprobaciones()) {
 
-      console.log("consola", "entro");
-
-      const formData = new FormData();
-      formData.append('file', file);
+      var formData = new FormData();
+      formData.append('file', fotoperfil.fotoperfil);
       formData.append('data', JSON.stringify(personaregistro));
-      usuarioserviceRe.save(formData);
-      console.log("Creado", "creado");
-    } else {
-      showErrorRe();
+      usuarioserviceRe.save(formData).then(data => {
+        usuarioserviceRe.login(personaregistro.correo, personaregistro.contrasenia).then(data => {
+          var id = data
+          usuarioserviceRe.obtener(id).then(data => {
+            console.log("datos usuario", data);
+            navigate('/principal', { state: data })
+          })
+        })
+      });
+      console.log("Creado", "creado")
     }
     showErrorRe();
   }
@@ -191,45 +183,45 @@ export const Inicio = () => {
           <div className="flex-1 m-5">
 
             <label htmlFor="nickRe" className="block text-900 font-medium mb-2">Nick</label>
-            <InputText id="input3" type="text" placeholder="Nick" className="w-full mb-3" value={personaRe.nick}
-              onChange={(e) => setpersonaRe(prevState => ({
+            <InputText id="input3" type="text" placeholder="Nick" className="w-full mb-3" value={personaregistro.nick}
+              onChange={(e) => setPersonaregistro(prevState => ({
                 ...prevState,
                 nick: e.target.value
               }))} />
 
             <label htmlFor="nombreRe" className="block text-900 font-medium mb-2">Nombre</label>
-            <InputText id="input4" type="text" placeholder="Nombre" className="w-full mb-3" value={personaRe.nombreRe}
-              onChange={(e) => setpersonaRe(prevState => ({
+            <InputText id="input4" type="text" placeholder="Nombre" className="w-full mb-3" value={personaregistro.nombre}
+              onChange={(e) => setPersonaregistro(prevState => ({
                 ...prevState,
-                nombreRe: e.target.value
+                nombre: e.target.value
               }))} />
 
             <label htmlFor="apellidoRe" className="block text-900 font-medium mb-2">Apellido/s</label>
-            <InputText id="input5" type="text" placeholder="Apellido/s" className="w-full mb-3" value={personaRe.apellidoRe}
-              onChange={(e) => setpersonaRe(prevState => ({
+            <InputText id="input5" type="text" placeholder="Apellido/s" className="w-full mb-3" value={personaregistro.apellido}
+              onChange={(e) => setPersonaregistro(prevState => ({
                 ...prevState,
-                apellidoRe: e.target.value
+                apellido: e.target.value
               }))} />
 
             <label htmlFor="email" className="block text-900 font-medium mb-2">Correo Electrónico</label>
-            <InputText id="input6" type="text" placeholder="Correo Electrónico" className="w-full mb-3" value={personaRe.correoRe}
-              onChange={(e) => setpersonaRe(prevState => ({
+            <InputText id="input6" type="text" placeholder="Correo Electrónico" className="w-full mb-3" value={setPersonaregistro.correo}
+              onChange={(e) => setPersonaregistro(prevState => ({
                 ...prevState,
-                correoRe: e.target.value
+                correo: e.target.value
               }))} />
 
             <label htmlFor="password" className="block text-900 font-medium mb-2">Contraseña</label>
-            <Password id="input7" placeholder="Contraseña" className="w-full mb-5" value={personaRe.contraseniaRe} onChange={(e) => setpersonaRe(prevState => ({
+            <Password id="input7" placeholder="Contraseña" className="w-full mb-5" value={personaregistro.contrasenia} onChange={(e) => setPersonaregistro(prevState => ({
               ...prevState,
-              contraseniaRe: e.target.value
+              contrasenia: e.target.value
             }))} toggleMask />
           </div>
           <div className="flex-1 m-5">
             <label htmlFor="password" className="block text-900 font-medium mb-2">Fecha de Nacimiento</label>
 
-            <Calendar value={personaRe.fechanacRe} placeholder="yy-mm-dd" dateFormat="yy-mm-dd" className="w-full mb-5" onChange={(e) => setpersonaRe(prevState => ({
+            <Calendar value={personaregistro.fechanac} placeholder="yy-mm-dd" dateFormat="yy-mm-dd" className="w-full mb-5" onChange={(e) => setPersonaregistro(prevState => ({
               ...prevState,
-              fechanacRe: e.target.value
+              fechanac: e.target.value
             }))} showIcon />
             <div className="flex card-container indigo-container">
               <div className="flex-1 m-5">
