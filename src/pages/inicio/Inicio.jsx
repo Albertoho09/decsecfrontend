@@ -71,10 +71,13 @@ export const Inicio = () => {
     if (personaRe.correoInicio !== '' && personaRe.contraseniaInicio !== '') {
 
       usuarioserviceInicio.login(personaRe.correoInicio, personaRe.contraseniaInicio).then(data => {
+        console.log(data)
         if (data === -1) {
           showError();
         } else {
+
           var id = data
+          console.log(id)
           usuarioserviceInicio.obtener(id).then(data => {
             console.log("datos usuario", data);
             navigate('/principal', { state: data })
@@ -165,8 +168,9 @@ export const Inicio = () => {
         })
       });
       console.log("Creado", "creado")
+    } else {
+      showErrorRe();
     }
-    showErrorRe();
   }
 
   const renderFooter = () => {

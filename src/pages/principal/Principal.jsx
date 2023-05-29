@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom"
-import "../../service/usuarioService"
-import "../../service/publicacionService"
 import "./principal.css"
 import { Dialog } from 'primereact/dialog';
 import { usuarioService } from "../../service/usuarioService"
@@ -12,12 +11,16 @@ import { AutoComplete } from 'primereact/autocomplete';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Toast } from 'primereact/toast';
 import { Image } from 'primereact/image';
+import { Menubar } from 'primereact/menubar';
+import Publicacion from "./publicacion";
+
 
 import "primereact/resources/themes/mdc-light-deeppurple/theme.css";
 import "primereact/resources/primereact.min.css";
 import 'primeicons/primeicons.css';
 import "primeflex/primeflex.css";
 import { publicacionService } from '../../service/publicacionService';
+import logo from '../../logo/logosimple.png';
 
 export const Principal = () => {
     const toast = useRef(null);
@@ -31,16 +34,14 @@ export const Principal = () => {
     const [fotoejemplo, setFotoejemplo] = useState(null);
     const [publicacion, setPublicacion] = useState({
         comentario: '',
-        codigousuario: usuario.usuario.codigo
+        idusuario: usuario.usuario.codigo
     });
 
     const [publicaciones, setpublicaciones] = useState([]);
-
-
-
     const [foto, setfoto] = useState({
         foto: null
     });
+    const navigate = useNavigate();
     const showToastError = () => {
         toastError.current.show({ severity: 'error', summary: 'Error', detail: 'Campos de Vacios', life: 3000 });
     }
@@ -48,7 +49,7 @@ export const Principal = () => {
         toast.current.show({ severity: 'success', summary: 'Success', detail: 'Publicado Correctamente', life: 3000 });
     }
     const search = (event) => {
-        // Timeout to emulate a network connection
+
         setTimeout(() => {
             let _usuariosfiltrados;
 
@@ -77,6 +78,11 @@ export const Principal = () => {
 
     const handelChange = (e) => {
         setPublicacion((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    }
+
+    const recargarpublicaciones = () => {
+        const servicepubli = new publicacionService();
+        servicepubli.getAll().then(data => setpublicaciones(data));
     }
 
     useEffect(() => {
@@ -115,19 +121,54 @@ export const Principal = () => {
         }
     }
 
+    const items = [
+        {
+            label: 'Publicacion',
+            icon: 'pi pi-fw pi-file',
+            items: [
+                {
+                    label: 'Nueva',
+                    icon: 'pi pi-fw pi-plus',
+                    command: () => { setVisible(true) }
+                },
+                {
+                    label: 'Borrar',
+                    icon: 'pi pi-fw pi-trash'
+                }
+            ]
+        },
+        {
+            label: 'Amigos',
+            icon: 'pi pi-fw pi-user',
+
+        },
+        {
+            label: 'Quit',
+            icon: 'pi pi-fw pi-power-off',
+            command: () => { navigate('/') }
+        }
+    ];
+
+    const viajaraperfil = () => {
+        navigate('/perfil', { state: usuario.usuario })
+    }
+
+    const start = <img alt="logo" src={logo} height="40" className="mr-2"></img>;
     return (
 
 
         <>
             <div className="grid m-4">
-                <div className="col-6 col-offset-3"></div>
+                <div className="col-12">
+                    <Menubar model={items} start={start} />
+                </div>
             </div>
 
             <div class="grid justify-content-center">
                 <div class="col-6 col-offset-1">
                     <Card title="Publicaciones">
                         <div class="flex justify-content-end m-3">
-                            <Button label="Subir Publicación" onClick={() => setVisible(true)} rounded />
+                            <Button icon="pi pi-refresh" rounded outlined aria-label="Filter" onClick={recargarpublicaciones} />
                             <Dialog header="Subir Publicación" visible={visible} onHide={() => setVisible(false)}
                                 style={{ width: 'auto' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
                                 <div class="grid justify-content-center m-3">
@@ -149,16 +190,23 @@ export const Principal = () => {
                             </Dialog>
                         </div>
 
-                        {publicaciones.map(publicacion =>
-                            <div className='flex justify-content-center'>
-                                <Card title="Title" subTitle="melva" className="md:w-35rem m-3">
-                                    <Image src={"data:image/png;base64," + publicacion.foto} alt="Image" width="550" preview />
-                                    <p className="m-3">
-                                        {publicacion.comentario}
-                                    </p>
-                                </Card>
-
-                            </div>
+                        {publicaciones.map((publicacion) => {
+                            return (
+                                < Publicacion
+                                    codigo={publicacion.codigo}
+                                    comentario={publicacion.comentario}
+                                    foto={publicacion.foto}
+                                    idusuario={publicacion.idusuario}
+                                    likes={publicacion.likes}
+                                    ncomentarios={publicacion.ncomentarios}
+                                    usuariosesion={usuario.usuario.codigo}
+                                    usuarionick={usuario.usuario.nick}
+                                    width={"650"}
+                                    height={"auto"}
+                                    ancho={"40"}
+                                />
+                            )
+                        }
                         )}
 
                     </Card>
@@ -175,7 +223,7 @@ export const Principal = () => {
                                 <div class="col-fixed" style={{ width: 100 + 'px' }}><Avatar image={"data:image/png;base64," + usuario.usuario.fotoperfil} size="xlarge" shape="circle" /></div>
                                 <div class="grid justify-content-start">
                                     <div class="grid m-2"><h4>{usuario.usuario.nombre + " " + usuario.usuario.apellido}</h4></div>
-                                    <div class="grid m-4"><Button label="Ver perfil" rounded /></div>
+                                    <div class="grid m-4"><Button label="Ver perfil" onClick={viajaraperfil} rounded /></div>
                                 </div>
                             </div>
                         </Card>

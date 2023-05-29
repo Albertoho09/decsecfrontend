@@ -22,6 +22,16 @@ export class publicacionService {
         return res.data;
     }
 
+    async megusta(id) {
+        const res = await axios.put(this.baseUrl + "megusta/" + id);
+        return res.data;
+    }
+
+    async nomegusta(id) {
+        const res = await axios.put(this.baseUrl + "nomegusta/" + id);
+        return res.data;
+    }
+
 
     async obtener(id) {
         const res = await axios.get(this.baseUrl + "obtener/" + id);
