@@ -12,7 +12,7 @@ import { usuarioService } from "../../service/usuarioService";
 import { publicacionService } from "../../service/publicacionService";
 const Publicacion = (props) => {
 
-    const [like, setlike] = useState(false)
+
     const [visible, setVisible] = useState(false)
     const [comentarios, setcomentarios] = useState([])
     const [comentario, setcomentario] = useState({
@@ -22,6 +22,8 @@ const Publicacion = (props) => {
         comentario: ''
     })
     const [usuariofoto, setusuariofoto] = useState({})
+    const [like, setlike] = useState(false)
+    const [nlikes, setnlikes] = useState(props.likes)
 
     const enviarComentario = () => {
         const service = new comentarioService();
@@ -31,25 +33,18 @@ const Publicacion = (props) => {
         setcomentario((prev) => ({ ...prev, comentario: '' }));
     }
 
-    const fotoporid = (comentario) => {
-        const serviceusuario = new usuarioService();
-        return serviceusuario.obtener(comentario.idusuario)
-    }
-
     const darlike = () => {
         const service = new publicacionService();
         try {
             if (!like) {
                 service.megusta(props.codigo)
                 setlike(true)
+                setnlikes(nlikes + 1);
             } else {
                 service.nomegusta(props.codigo)
                 setlike(false)
+                setnlikes(nlikes - 1);
             }
-
-            setTimeout(() => {
-                window.location.reload()
-            }, 1000)
 
         } catch (err) {
             console.log(err);
@@ -70,6 +65,7 @@ const Publicacion = (props) => {
                     <Image src={"data:image/png;base64," + usuariofoto.fotoperfil} alt="Image" width="65" height="65" className="shadow-2 border-round" />
                     <b className="m-4">{usuariofoto.nick}</b>
                 </div>
+
                 <Image src={"data:image/png;base64," + props.foto} alt="Image" width={props.width} height={props.height} preview />
                 <Card className="mt-2">
                     <p className="m-0">
@@ -79,7 +75,7 @@ const Publicacion = (props) => {
                 <div className='flex justify-content-center mt-3'>
                     <div className='m-1'>
                         <Button icon="pi pi-heart" rounded text severity="danger" aria-label="Favorite" onClick={darlike} />
-                        <Badge value={props.likes} severity="danger"></Badge>
+                        <Badge value={nlikes} severity="danger"></Badge>
                     </div>
                     <div className='m-1 ml-6'>
                         <Button icon="pi pi-comment" rounded text severity="info" aria-label="Favorite" onClick={() => setVisible(true)} />

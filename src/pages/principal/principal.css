@@ -1,3 +1,6 @@
-#contendor {
-    background-color: red;
+.fixed-container {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
 }

@@ -8,6 +8,15 @@ export class usuarioService {
         return res.data;
     }
 
+    async actualizar(data) {
+        const res = await axios.post(this.baseUrl + "actualizar", data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return res.data;
+    }
+
     async save(data) {
         const res = await axios.post(this.baseUrl + "save", data, {
             headers: {
