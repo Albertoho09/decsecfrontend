@@ -16,17 +16,23 @@ import Publicacion from "../principal/publicacion";
 
 export const Perfil = () => {
 
+    // variables para recibir los datos de una pantalla y dirigirme a otra
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [peticion, setpeticion] = useState({
+    //variable de una peticion para mandar a la api
+    const [peticion] = useState({
         codigo: null,
         idemisor: location.state.ususesion.codigo,
         idreceptor: location.state.usuario.codigo,
         estado: 0
     });
+
+    //el usuario mostrado y sus publicaciones
     const [publicaciones, setpublicaciones] = useState([]);
     const [usuario, setusuario] = useState(location.state.usuario);
+
+    //variable del usuario editado para mandar a la api
     const [usuarioeditar, setusuarioeditar] = useState({
         codigo: usuario.codigo,
         nick: usuario.nick,
@@ -37,19 +43,23 @@ export const Perfil = () => {
         fechanac: usuario.fechanac,
     });
 
+    //variables aux
     const [visible, setVisible] = useState(false);
     const [disabled, setDisabled] = useState(false);
     const [valueboton, setValueboton] = useState("Añadir Amigo");
     const [inputEnabled, setInputEnabled] = useState(false);
 
+    //var de avisos de error
     const toastError = useRef(null);
     const toast = useRef(null);
 
+    //habilitar o no los campos de edición
     const toggleInput = () => {
         setInputEnabled(!inputEnabled);
     };
 
 
+    //viajo de nuevo a la principal (cambio al usuario con el que he iniciado sesion)
     const viajaraprincipal = () => {
         const serviceusu = new usuarioService();
         serviceusu.obtener(location.state.ususesion.codigo).then(
@@ -57,6 +67,7 @@ export const Perfil = () => {
         )
     }
 
+    //comprobaciones antes de enviar el usuario editado a la api
     const comprobaciones = () => {
         console.log("paso por las comprobaciones");
         if (usuarioeditar.apellido.length > 0 && usuarioeditar.nombre.length > 0
@@ -68,6 +79,8 @@ export const Perfil = () => {
         }
     }
 
+
+    //actualizar el usuario (se recarga la pagina)
     const actualizarUsuario = () => {
         if (comprobaciones()) {
             const serviceusu = new usuarioService();
@@ -85,6 +98,8 @@ export const Perfil = () => {
         }
     }
 
+
+    //mostrar mensajes de errores
     const showError = () => {
         toastError.current.show({ severity: 'error', summary: 'Error al Actualizar', detail: 'Campos Vacios', life: 3000 });
     }
@@ -93,6 +108,8 @@ export const Perfil = () => {
         toast.current.show({ severity: 'success', summary: 'Correcto', detail: 'Usuario Actualizado Correctamente', life: 3000 });
     }
 
+
+
     const enviarpeticion = () => {
         const service = new peticionService();
         service.save(peticion);
@@ -100,9 +117,13 @@ export const Perfil = () => {
         setValueboton("Peticion Pendiente...")
     }
 
+
+    //codigo que solo se ejecuta una vez
     useEffect(() => {
+
         const servicepubli = new publicacionService();
         const serviceusu = new usuarioService();
+
         serviceusu.obtener(usuario.codigo).then(data => setusuario(data))
         serviceusu.obtener(usuario.codigo).then(data => setusuarioeditar({
             codigo: data.codigo,
@@ -115,10 +136,12 @@ export const Perfil = () => {
         }))
         servicepubli.obtener(usuario.codigo).then(data => setpublicaciones(data)
         );
+
+        //comprobacion del boton de peticiones
         const servicepeti = new peticionService();
         servicepeti.comprobarPeticion(location.state.ususesion.codigo, location.state.usuario.codigo, 0).then(
             data => {
-                if (data == 1) {
+                if (data === 1) {
                     setDisabled(true)
                     setValueboton("Peticion Pendiente...")
                 }
@@ -126,20 +149,22 @@ export const Perfil = () => {
         )
         servicepeti.comprobarPeticion(location.state.ususesion.codigo, location.state.usuario.codigo, 1).then(
             data => {
-                if (data == 1) {
+                if (data === 1) {
                     setDisabled(true)
                     setValueboton("Ya es tu amigo")
                 }
             }
         )
     }, []);
+
+
     return (
         <>
             <div className="card grid justify-content-center">
                 <Card style={{ width: '70%', marginTop: '5%' }}>
                     <div className="surface-0">
                         <div className="flex align-items-start">
-                            <Image src={"data:image/png;base64," + usuario.fotoperfil} alt="Image" width="130" className="ml-1" />
+                            <Image src={"data:image/png;base64," + usuario.fotoperfil} alt="Image" width="130" className="ml-1" preview />
                             <div className="flex flex-column ml-4">
                                 <ul className="list-none p-0 m-0 flex align-items-center font-medium mb-3">
                                     <li>
@@ -176,7 +201,8 @@ export const Perfil = () => {
                         </div>
                         <div className="flex justify-content-end mr-2">
                             {
-                                usuario.codigo == location.state.ususesion.codigo ? (
+                                //comprobacion de usuario de la sesion y el perfil de este usuario
+                                usuario.codigo === location.state.ususesion.codigo ? (
                                     <Button label="Editar" icon="pi pi-user-edit" onClick={() => setVisible(true)} />
                                 ) : (
                                     <Button disabled={disabled} label={valueboton} className="p-button-outlined mr-1" icon="pi pi-user-plus" onClick={enviarpeticion} />
@@ -259,7 +285,6 @@ export const Perfil = () => {
                             <h3>Este usuario no tiene publicaciones</h3>
                         ) : (
                             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-
                                 {
                                     publicaciones.map((publicacion) => {
                                         return (

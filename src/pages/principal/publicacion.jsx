@@ -12,19 +12,30 @@ import { usuarioService } from "../../service/usuarioService";
 import { publicacionService } from "../../service/publicacionService";
 const Publicacion = (props) => {
 
-
+    //dialog de comentarios
     const [visible, setVisible] = useState(false)
+
     const [comentarios, setcomentarios] = useState([])
+
+    //variable para subir un comentario
     const [comentario, setcomentario] = useState({
         idpublicacion: props.codigo,
         idusuario: props.usuariosesion,
         nickusuario: props.usuarionick,
         comentario: ''
     })
+
+    //la foto de quien pertenece la publicacion no esta en la tabla publicacion, la busco aparte
     const [usuariofoto, setusuariofoto] = useState({})
+
+    //variable para sumar o restar like
     const [like, setlike] = useState(false)
+
+    //var para mostrar directamente la subida o bajada del contador de likes
     const [nlikes, setnlikes] = useState(props.likes)
 
+
+    //enviar el comentario (una vez guardados se actualiza)
     const enviarComentario = () => {
         const service = new comentarioService();
         service.save(comentario).then(data =>
@@ -51,6 +62,7 @@ const Publicacion = (props) => {
         }
     }
 
+    //metodo que solo se ejecuta una vez
     useEffect(() => {
         const service = new comentarioService();
         const serviceusuario = new usuarioService();

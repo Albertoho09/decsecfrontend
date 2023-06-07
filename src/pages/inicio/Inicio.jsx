@@ -20,22 +20,19 @@ import imagenInicio from "../../logo/captura.png";
 import imagenInicioSesion from "../../logo/logocompleto.png";
 import sinfoto from "../../logo/sinfoto.png";
 import { usuarioService } from '../../service/usuarioService';
-//import { StyleClass } from 'primereact/styleclass';
+
 
 export const Inicio = () => {
 
+  //avisos de errores
   const toast = useRef(null);
   const toastRe = useRef(null);
-  const [state, setState] = useState({
-    displayBasic: false,
-    displayBasic2: false,
-    displayModal: false,
-    displayMaximizable: false,
-    displayPosition: false,
-    displayResponsive: false,
-    position: 'center',
-  })
 
+  //var para la visibilidad del dialog
+  const [visible, setVisible] = useState(false);
+
+
+  //objeto para el inicio de sesion
   const [personaRe, setpersonaRe] = useState({
     codigosesion: '',
 
@@ -46,6 +43,8 @@ export const Inicio = () => {
     fotoper: sinfoto
   })
 
+
+  //objeto para el registro
   const [personaregistro, setPersonaregistro] = useState({
     codigo: null,
     nick: '',
@@ -59,16 +58,21 @@ export const Inicio = () => {
     npublicaciones: 0
   });
 
+  //Foto de perfil elegida por el usuario
   const [fotoperfil, setfotoperfil] = useState({
     fotoperfil: null
   });
 
-
+  //para navegar entre pantallas
   const navigate = useNavigate();
 
+
+
+
+  //INICIO DE SESIÓN
   const handleClick = () => {
     const usuarioserviceInicio = new usuarioService();
-    if (personaRe.correoInicio !== '' && personaRe.contraseniaInicio !== '') {
+    if (personaRe.correoInicio.length > 0 && personaRe.contraseniaInicio.length > 0) {
 
       usuarioserviceInicio.login(personaRe.correoInicio, personaRe.contraseniaInicio).then(data => {
         console.log(data)
@@ -89,28 +93,7 @@ export const Inicio = () => {
     }
   }
 
-  const onClick = (name, position) => {
-    let state = {
-      [`${name}`]: true
-    };
-
-    if (position) {
-      state = {
-        ...state,
-        position
-      }
-    }
-
-    setState(state);
-  }
-
-  const onHide = (name) => {
-    setState({
-      [`${name}`]: false
-    });
-  }
-
-
+  // guardar la foto y mostrarla al usuario
   const guardarfoto = (e) => {
 
     console.log("entro en guardar foto");
@@ -127,6 +110,7 @@ export const Inicio = () => {
     console.log("salgo de guardar foto");
   }
 
+  //Metodos para el muestreo de los mensajes de error
   const showError = () => {
     toast.current.show({ severity: 'error', summary: 'Error', detail: 'Campos Incorrectos o NO VALIDOS', life: 3000 });
   }
@@ -139,9 +123,10 @@ export const Inicio = () => {
   const comprobaciones = () => {
 
     console.log("consola:", "he pasado por aqui");
-    if (personaregistro.apellido !== '' && personaregistro.nombre !== '' &&
-      personaregistro.correo !== '' && personaregistro.contrasenia !== '' &&
-      personaregistro.fechanac !== null && personaregistro.nick !== '' && personaRe.fotoper !== '') {
+    if (personaregistro.apellido.length > 0 && personaregistro.nombre.length > 0 &&
+      personaregistro.correo.length > 0 && personaregistro.contrasenia.length > 0 &&
+      personaregistro.fechanac !== null && personaregistro.nick.length > 0 && fotoperfil.fotoperfil !== null) {
+
       return true;
     }
     else {
@@ -233,7 +218,7 @@ export const Inicio = () => {
                 <Avatar image={personaRe.fotoper} size="xlarge" shape="circle" />
               </div>
               <div className="flex-1 m-5">
-                <input type='file' name='file' onChange={(e) => guardarfoto(e)} />
+                <input type='file' name='file' accept="image/png" onChange={(e) => guardarfoto(e)} />
               </div>
             </div>
             <Toast ref={toastRe} position="bottom-left" />
@@ -250,7 +235,10 @@ export const Inicio = () => {
         <section>
           <span className="block text-8xl font-bold mb-1">DECSEC</span>
           <div className="text-7xl text-primary font-bold mb-3">WebApp by Alberto Hidalgo</div>
-          <p className="mt-1 mb-4 text-700 line-height-3 text-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <p className="mt-1 mb-4 text-700 line-height-3 text-2xl">Página Web creada por Alberto Hidalgo Olivera
+            para el proyecto de DAM. Esta página simula una red social usando varias tecnologías como springboot y react.
+            En esta página podrás: registrarte, subir publicaciones, añadir amigos, ver sus publicaciones, comentarlas y
+            hablar con los usuarios de la página mediante un chat general.</p>
           <div className="dialog-demo">
             <div className="flex flex-column md:flex-row">
               <div className="w-full md:w-5 flex flex-column align-items-s justify-content-center gap-3 py-5">
@@ -285,8 +273,8 @@ export const Inicio = () => {
                 </Divider>
               </div>
               <div className="w-full md:w-5 flex align-items-center justify-content-center py-5">
-                <Button label="Registrarse" icon="pi pi-user" onClick={() => onClick('displayBasic')} className="p-button-success"></Button>
-                <Dialog header="" visible={state.displayBasic} style={{ width: '50vw' }} footer={renderFooter('displayBasic')} onHide={() => onHide('displayBasic')}>
+                <Button label="Registrarse" icon="pi pi-user" onClick={() => setVisible(true)} className="p-button-success"></Button>
+                <Dialog header="" visible={visible} style={{ width: '50vw' }} footer={renderFooter} onHide={() => setVisible(false)}>
                 </Dialog>
               </div>
             </div>

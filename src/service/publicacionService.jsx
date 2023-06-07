@@ -37,4 +37,9 @@ export class publicacionService {
         const res = await axios.get(this.baseUrl + "obtener/" + id);
         return res.data;
     }
+
+    async publicacionesamigos(id) {
+        const res = await axios.get(this.baseUrl + "publicacionesamigos/" + id);
+        return res.data;
+    }
 }

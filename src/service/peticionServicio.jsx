@@ -9,7 +9,7 @@ export class peticionService {
     }
 
     async delete(id) {
-        const res = await axios.get(this.baseUrl + "delete/" + id);
+        const res = await axios.delete(this.baseUrl + "delete/" + id);
         return res.data;
     }
 
@@ -19,7 +19,7 @@ export class peticionService {
     }
 
     async actualizarpeticion(codigo, estado) {
-        const res = await axios.get(this.baseUrl + "obtener/" + codigo + "/" + estado);
+        const res = await axios.post(this.baseUrl + "actualizar/" + codigo + "/" + estado);
         return res.data;
     }
 
