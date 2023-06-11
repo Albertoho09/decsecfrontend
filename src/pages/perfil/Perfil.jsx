@@ -69,7 +69,6 @@ export const Perfil = () => {
 
     //comprobaciones antes de enviar el usuario editado a la api
     const comprobaciones = () => {
-        console.log("paso por las comprobaciones");
         if (usuarioeditar.apellido.length > 0 && usuarioeditar.nombre.length > 0
             && usuarioeditar.nick.length > 0 && usuarioeditar.fechanac !== null
             && usuarioeditar.correo.length > 0 && usuarioeditar.contrasenia.length > 0) {
