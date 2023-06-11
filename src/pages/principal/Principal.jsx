@@ -130,7 +130,6 @@ export const Principal = () => {
 
     const guardarfoto = (e) => {
 
-        console.log("entro en guardar foto");
         setfoto({ foto: e.target.files[0] });
         const url = URL.createObjectURL(e.target.files[0]);
         setFotoejemplo(url);
