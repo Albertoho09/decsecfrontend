@@ -134,7 +134,6 @@ export const Principal = () => {
         setfoto({ foto: e.target.files[0] });
         const url = URL.createObjectURL(e.target.files[0]);
         setFotoejemplo(url);
-        console.log("salgo de guardar foto");
     }
 
     //comprobaciones antes de subir una foto
@@ -215,7 +214,6 @@ export const Principal = () => {
     //compruebo si ha seleccionado un usuario en el autocomplete y le mando a su perfil
     const buscarUsuario = () => {
         if (typeof usuarioseleccionado === "object" && usuarioseleccionado !== null) {
-            console.log(usuarioseleccionado)
             let Data = { usuario: usuarioseleccionado, ususesion: usuario.usuario }
             navigate('/perfil', { state: Data })
         }
