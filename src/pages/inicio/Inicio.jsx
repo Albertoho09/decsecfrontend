@@ -75,15 +75,13 @@ export const Inicio = () => {
     if (personaRe.correoInicio.length > 0 && personaRe.contraseniaInicio.length > 0) {
 
       usuarioserviceInicio.login(personaRe.correoInicio, personaRe.contraseniaInicio).then(data => {
-        console.log(data)
+        
         if (data === -1) {
           showError();
         } else {
 
           var id = data
-          console.log(id)
           usuarioserviceInicio.obtener(id).then(data => {
-            console.log("datos usuario", data);
             navigate('/principal', { state: data })
           })
         }
@@ -95,8 +93,7 @@ export const Inicio = () => {
 
   // guardar la foto y mostrarla al usuario
   const guardarfoto = (e) => {
-
-    console.log("entro en guardar foto");
+    
     setfotoperfil(prevState => ({
       ...prevState,
       fotoperfil: e.target.files[0]
@@ -107,7 +104,6 @@ export const Inicio = () => {
       fotoper: url
     }));
 
-    console.log("salgo de guardar foto");
   }
 
   //Metodos para el muestreo de los mensajes de error
@@ -122,7 +118,6 @@ export const Inicio = () => {
 
   const comprobaciones = () => {
 
-    console.log("consola:", "he pasado por aqui");
     if (personaregistro.apellido.length > 0 && personaregistro.nombre.length > 0 &&
       personaregistro.correo.length > 0 && personaregistro.contrasenia.length > 0 &&
       personaregistro.fechanac !== null && personaregistro.nick.length > 0 && fotoperfil.fotoperfil !== null) {
@@ -136,7 +131,6 @@ export const Inicio = () => {
 
 
   const registro = () => {
-    console.log("fotoper", personaRe.fotoper);
     const usuarioserviceRe = new usuarioService();
     if (comprobaciones()) {
 
@@ -147,12 +141,10 @@ export const Inicio = () => {
         usuarioserviceRe.login(personaregistro.correo, personaregistro.contrasenia).then(data => {
           var id = data
           usuarioserviceRe.obtener(id).then(data => {
-            console.log("datos usuario", data);
             navigate('/principal', { state: data })
           })
         })
       });
-      console.log("Creado", "creado")
     } else {
       showErrorRe();
     }
